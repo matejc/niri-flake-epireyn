@@ -55,8 +55,10 @@ in
     finalConfigFile = mkOption {
       type = types.nullOr (types.pathWith { inStore = true; });
       default =
-        if builtins.isString cfg.config then
+        if builtins.isPath cfg.config then
           cfg.config
+        else if builtins.isString cfg.config then
+          pkgs.writeText "config.kdl" cfg.config
         else if cfg.config != null then
           if config._module.args ? pkgs then
             pkgs.callPackage kdl.generator {
